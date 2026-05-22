@@ -6,18 +6,19 @@ import { recordBuyEvent } from '@/app/actions/tracking';
 
 interface BuyButtonProps {
   funnelId: string;
+  utmSource: string;
   className?: string;
   children: React.ReactNode;
 }
 
-export default function BuyButton({ funnelId, className, children }: BuyButtonProps) {
+export default function BuyButton({ funnelId, utmSource, className, children }: BuyButtonProps) {
   const [showToast, setShowToast] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleClick = async () => {
     if (isSubmitting) return;
     setIsSubmitting(true);
-    await recordBuyEvent(funnelId);
+    await recordBuyEvent(funnelId, utmSource);
     setIsSubmitting(false);
     setShowToast(true);
     setTimeout(() => setShowToast(false), 3000);

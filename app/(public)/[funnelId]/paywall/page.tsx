@@ -2,25 +2,31 @@ import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 
 import { funnelsConfig } from "@/app/config/funnels";
+import { getUtmSource } from "@/app/lib/source";
 import { recordEvent } from "@/app/lib/tracking";
 
 import BuyButton from "./BuyButton";
 
 export default async function FunnelPaywallPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ funnelId: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { funnelId } = await params;
+  const sp = await searchParams;
   const config = funnelsConfig[funnelId as keyof typeof funnelsConfig];
 
   if (!config) notFound();
+
+  const utmSource = getUtmSource(sp);
 
   const cookieStore = await cookies();
   const userId = cookieStore.get("userId")?.value;
   if (userId) {
     try {
-      await recordEvent(userId, funnelId, "page_view", "paywall");
+      await recordEvent(userId, funnelId, "page_view", "paywall", utmSource);
     } catch (err) {
       console.error("[tracking] recordPageView failed:", err);
     }
@@ -54,6 +60,7 @@ export default async function FunnelPaywallPage({
             </div>
             <BuyButton
               funnelId={funnelId}
+              utmSource={utmSource}
               className="mt-6 block w-full py-2.5 text-center rounded-lg bg-white/10 hover:bg-white/20 text-sm font-semibold transition-all duration-200 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
             >
               Buy
@@ -76,6 +83,7 @@ export default async function FunnelPaywallPage({
             </div>
             <BuyButton
               funnelId={funnelId}
+              utmSource={utmSource}
               className="mt-6 block w-full py-2.5 text-center rounded-lg bg-indigo-600 hover:bg-indigo-500 text-sm font-semibold transition-all duration-200 shadow-md cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
             >
               Buy

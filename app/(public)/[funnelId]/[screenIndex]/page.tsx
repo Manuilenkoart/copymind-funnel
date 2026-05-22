@@ -2,16 +2,21 @@ import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 
 import { funnelsConfig } from '@/app/config/funnels';
+import { getUtmSource } from '@/app/lib/source';
 import { recordEvent } from '@/app/lib/tracking';
+import { withParams } from '@/app/lib/url';
 
 import ScreenRenderer from '../QuestionType/ScreenRenderer';
 
 export default async function FunnelScreenPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ funnelId: string; screenIndex: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { funnelId, screenIndex: screenIndexStr } = await params;
+  const sp = await searchParams;
   const config = funnelsConfig[funnelId as keyof typeof funnelsConfig];
 
   if (!config) notFound();
@@ -21,22 +26,27 @@ export default async function FunnelScreenPage({
     notFound();
   }
 
+  const utmSource = getUtmSource(sp);
+
   const cookieStore = await cookies();
   const userId = cookieStore.get('userId')?.value;
   if (userId) {
     try {
-      await recordEvent(userId, funnelId, 'page_view', screenIndexStr);
+      await recordEvent(userId, funnelId, 'page_view', screenIndexStr, utmSource);
     } catch (err) {
       console.error('[tracking] recordPageView failed:', err);
     }
   }
 
   const screen = config.screens[screenIndex];
-  const nextHref =
+  const nextHref = withParams(
     screenIndex + 1 < config.screens.length
       ? `/${funnelId}/${screenIndex + 1}`
-      : `/${funnelId}/paywall`;
-  const prevHref = screenIndex > 0 ? `/${funnelId}/${screenIndex - 1}` : null;
+      : `/${funnelId}/paywall`,
+    sp
+  );
+  const prevHref =
+    screenIndex > 0 ? withParams(`/${funnelId}/${screenIndex - 1}`, sp) : null;
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-6 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white font-sans">

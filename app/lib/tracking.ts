@@ -3,8 +3,9 @@ import { createServerClient } from './supabase/server';
 export async function recordEvent(
   userId: string,
   funnelId: string,
-  name: 'page_view'| 'buy',
-  questionId: string | null = null
+  name: 'page_view' | 'buy',
+  questionId: string | null,
+  utmSource: string
 ): Promise<void> {
   const supabase = createServerClient();
   await supabase
@@ -15,6 +16,7 @@ export async function recordEvent(
     funnel_id: funnelId,
     question_id: questionId,
     user_id: userId,
+    utm_source: utmSource,
   });
 }
 
