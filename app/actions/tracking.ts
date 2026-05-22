@@ -22,13 +22,14 @@ export async function saveEmail(email: string): Promise<{ ok: boolean; error?: s
 }
 
 export async function recordBuyEvent(
-  funnelId: string
+  funnelId: string,
+  utmSource: string
 ): Promise<{ ok: boolean; error?: string }> {
   const cookieStore = await cookies();
   const userId = cookieStore.get('userId')?.value;
   if (!userId) return { ok: false, error: 'No user session' };
   try {
-    await recordEvent(userId, funnelId, 'buy', 'paywall');
+    await recordEvent(userId, funnelId, 'buy', 'paywall', utmSource);
     return { ok: true };
   } catch (err) {
     console.error('[tracking] recordBuyEvent failed:', err);

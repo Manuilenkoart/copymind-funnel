@@ -19,11 +19,11 @@ vi.mock('@/app/lib/supabase/server', () => ({
 
 import { recordEvent, updateUserEmail } from '@/app/lib/tracking';
 
-describe('recordPageView', () => {
+describe('recordEvent', () => {
   beforeEach(() => vi.clearAllMocks());
 
   it('upserts the user row', async () => {
-    await recordEvent('user-abc', 'quiz-1', 'page_view', '0');
+    await recordEvent('user-abc', 'quiz-1', 'page_view', '0', 'google');
     expect(mockFrom).toHaveBeenCalledWith('users');
     expect(mockUpsert).toHaveBeenCalledWith(
       { id: 'user-abc' },
@@ -31,22 +31,41 @@ describe('recordPageView', () => {
     );
   });
 
-  it('inserts a page_view event with correct fields', async () => {
-    await recordEvent('user-abc', 'quiz-1', 'page_view', '0');
+  it('inserts a page_view event with utm_source', async () => {
+    await recordEvent('user-abc', 'quiz-1', 'page_view', '0', 'google');
     expect(mockFrom).toHaveBeenCalledWith('events');
     expect(mockInsert).toHaveBeenCalledWith({
       name: 'page_view',
       funnel_id: 'quiz-1',
       question_id: '0',
       user_id: 'user-abc',
+      utm_source: 'google',
     });
   });
 
+  it('records "Direct" when caller passes "Direct"', async () => {
+    await recordEvent('user-abc', 'quiz-1', 'page_view', '0', 'Direct');
+    expect(mockInsert).toHaveBeenCalledWith(
+      expect.objectContaining({ utm_source: 'Direct' })
+    );
+  });
+
   it('records paywall as question_id "paywall"', async () => {
-    await recordEvent('user-abc', 'quiz-1', 'page_view', 'paywall');
+    await recordEvent('user-abc', 'quiz-1', 'page_view', 'paywall', 'google');
     expect(mockInsert).toHaveBeenCalledWith(
       expect.objectContaining({ question_id: 'paywall' })
     );
+  });
+
+  it('records a buy event with utm_source', async () => {
+    await recordEvent('user-abc', 'quiz-1', 'buy', 'paywall', 'facebook');
+    expect(mockInsert).toHaveBeenCalledWith({
+      name: 'buy',
+      funnel_id: 'quiz-1',
+      question_id: 'paywall',
+      user_id: 'user-abc',
+      utm_source: 'facebook',
+    });
   });
 });
 
