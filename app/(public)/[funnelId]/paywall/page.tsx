@@ -5,7 +5,9 @@ import { funnelsConfig } from "@/app/config/funnels";
 import { getUtmSource } from "@/app/lib/source";
 import { recordEvent } from "@/app/lib/tracking";
 
-import BuyButton from "./BuyButton";
+import Motif from "../components/Motif";
+import Shell from "../components/Shell";
+import PaywallChoice from "./PaywallChoice";
 
 export default async function FunnelPaywallPage({
   params,
@@ -33,70 +35,47 @@ export default async function FunnelPaywallPage({
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-6 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white font-sans">
-      <div className="w-full max-w-lg p-8 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 shadow-2xl transition-all duration-300">
-        <span className="text-xs font-semibold uppercase tracking-wider text-indigo-400">
-          Final Step: Unlock Access
-        </span>
-        <h1 className="mt-4 text-3xl font-extrabold tracking-tight">
-          Choose Your Plan
-        </h1>
-        <p className="mt-2 text-sm text-slate-300">
-          Get lifetime access to the private dashboard and all custom premium
-          tools.
+    <Shell>
+      <div className="flex flex-1 flex-col px-6">
+        <div className="mt-2 mb-4 flex justify-center">
+          <Motif />
+        </div>
+
+        <h1 className="glass-heading compact mb-2.5">Begin your practice</h1>
+        <p
+          className="glass-sub mb-5"
+          style={{ fontSize: 14 }}
+        >
+          7-day free trial. Cancel anytime.
         </p>
 
-        <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div className="relative p-6 rounded-xl bg-white/5 border border-white/10 hover:border-indigo-400/50 hover:bg-white/10 transition-all duration-200 flex flex-col justify-between">
-            <div>
-              <h3 className="text-lg font-bold">Standard Plan</h3>
-              <p className="mt-1 text-xs text-slate-400">
-                Basic features &amp; setup
-              </p>
-              <div className="mt-4 flex items-baseline">
-                <span className="text-3xl font-extrabold">$19</span>
-                <span className="ml-1 text-sm text-slate-400">/one-time</span>
-              </div>
-            </div>
-            <BuyButton
-              funnelId={funnelId}
-              utmSource={utmSource}
-              className="mt-6 block w-full py-2.5 text-center rounded-lg bg-white/10 hover:bg-white/20 text-sm font-semibold transition-all duration-200 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
-            >
-              Buy
-            </BuyButton>
+        <div className="mb-[18px] flex items-center justify-center gap-2">
+          <div className="flex gap-0.5">
+            {[0, 1, 2, 3, 4].map((i) => (
+              <svg key={i} width="13" height="13" viewBox="0 0 13 13">
+                <path
+                  d="M6.5 0.5l1.8 3.7 4.1.6-3 2.9.7 4.1-3.6-2-3.6 2 .7-4.1-3-2.9 4.1-.6z"
+                  fill="#FFD27A"
+                />
+              </svg>
+            ))}
           </div>
-
-          <div className="relative p-6 rounded-xl bg-indigo-600/20 border-2 border-indigo-500 hover:bg-indigo-600/30 transition-all duration-200 flex flex-col justify-between shadow-lg shadow-indigo-500/10">
-            <span className="absolute -top-3 right-4 px-2 py-0.5 rounded-full bg-indigo-500 text-[10px] font-bold uppercase tracking-wider">
-              Popular
-            </span>
-            <div>
-              <h3 className="text-lg font-bold">Premium Plan</h3>
-              <p className="mt-1 text-xs text-indigo-200">
-                Full access &amp; updates
-              </p>
-              <div className="mt-4 flex items-baseline">
-                <span className="text-3xl font-extrabold">$49</span>
-                <span className="ml-1 text-sm text-indigo-200">/one-time</span>
-              </div>
-            </div>
-            <BuyButton
-              funnelId={funnelId}
-              utmSource={utmSource}
-              className="mt-6 block w-full py-2.5 text-center rounded-lg bg-indigo-600 hover:bg-indigo-500 text-sm font-semibold transition-all duration-200 shadow-md cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
-            >
-              Buy
-            </BuyButton>
-          </div>
+          <span
+            className="text-xs"
+            style={{
+              color: "var(--lg-muted)",
+              letterSpacing: 0.1,
+              textShadow: "0 1px 2px rgba(0,0,0,0.18)",
+            }}
+          >
+            4.9 · loved by 180,000+ reflectors
+          </span>
         </div>
 
-        <div className="mt-8 text-center">
-          <p className="text-xs text-slate-400">
-            30-day money back guarantee. Safe &amp; secure payment.
-          </p>
-        </div>
+        <PaywallChoice funnelId={funnelId} utmSource={utmSource} />
+
+        <div className="flex-1" />
       </div>
-    </main>
+    </Shell>
   );
 }

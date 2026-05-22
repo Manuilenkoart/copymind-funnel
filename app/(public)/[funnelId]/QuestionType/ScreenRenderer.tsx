@@ -9,19 +9,17 @@ interface ScreenRendererProps {
   prevHref: string | null;
 }
 
-export default function ScreenRenderer({
-  screen,
-  nextHref,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  prevHref: _prevHref,
-}: ScreenRendererProps) {
+export default function ScreenRenderer({ screen, nextHref }: ScreenRendererProps) {
+  const subtitle = screen.subtitle;
+
   return (
-    <div className="mt-4">
-      <h1
-        className={`font-extrabold tracking-tight ${screen.title.tailwindcss || ""}`}
-      >
-        {screen.title.text}
-      </h1>
+    <>
+      <h1 className="glass-heading mb-2.5">{screen.title.text}</h1>
+      {subtitle ? (
+        <p className="glass-sub mb-8">{subtitle.text}</p>
+      ) : (
+        <div className='"mb-8"' />
+      )}
 
       {screen.type === QuestionType.rowList && (
         <RowList screen={screen} nextHref={nextHref} />
@@ -29,6 +27,6 @@ export default function ScreenRenderer({
       {screen.type === QuestionType.email && (
         <EmailForm screen={screen} nextHref={nextHref} />
       )}
-    </div>
+    </>
   );
 }

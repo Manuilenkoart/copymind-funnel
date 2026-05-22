@@ -1,26 +1,165 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #060b22;
+  --foreground: #ffffff;
+
+  --lg-fg: #ffffff;
+  --lg-muted: rgba(255, 255, 255, 0.78);
+  --lg-accent: #3c7dd9;
+  --lg-accent-ink: #ffffff;
+  --lg-glass-bg: rgba(255, 255, 255, 0.14);
+  --lg-glass-bg-strong: rgba(255, 255, 255, 0.22);
+  --lg-glass-border: rgba(255, 255, 255, 0.32);
+  --lg-progress-track: rgba(255, 255, 255, 0.2);
+  --lg-radius: 26px;
+  --lg-pill: 999px;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-dm-sans);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+html,
 body {
+  margin: 0;
+  padding: 0;
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family:
+    var(--font-dm-sans), "DM Sans", -apple-system, "Helvetica Neue", Helvetica,
+    Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* ── Liquid Glass wallpaper ────────────────────────────────────────────────
+   iOS lock-screen vibe: lavender / sapphire / magenta / teal drifts over a
+   deep midnight navy base. Fixed so it doesn't scroll with content. */
+.glass-bg {
+  background:
+    radial-gradient(75% 55% at 22% 22%, #8b5cd9 0%, rgba(139, 92, 217, 0) 60%),
+    radial-gradient(70% 65% at 78% 38%, #3c7dd9 0%, rgba(60, 125, 217, 0) 65%),
+    radial-gradient(85% 60% at 55% 88%, #b5689e 0%, rgba(181, 104, 158, 0) 60%),
+    radial-gradient(45% 45% at 88% 78%, #4fb8d4 0%, rgba(79, 184, 212, 0) 65%),
+    linear-gradient(180deg, #060b22 0%, #0a1130 50%, #131a3c 100%);
+  background-attachment: fixed;
+}
+
+/* ── Frosted-glass surface ───────────────────────────────────────────────── */
+.glass-surface {
+  background: var(--lg-glass-bg);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  backdrop-filter: blur(22px) saturate(180%);
+  border: 0.5px solid var(--lg-glass-border);
+  box-shadow:
+    inset 0 0.5px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -0.5px 0 rgba(0, 0, 0, 0.12),
+    0 1px 2px rgba(0, 0, 0, 0.1),
+    0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.glass-surface-strong {
+  background: var(--lg-glass-bg-strong);
+}
+
+/* Top-edge specular highlight — `::before` is positioned by the parent. */
+.glass-gloss {
+  position: relative;
+  overflow: hidden;
+}
+.glass-gloss::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 12px;
+  right: 12px;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.6),
+    transparent
+  );
+  pointer-events: none;
+}
+
+/* ── Glossy primary button ───────────────────────────────────────────────── */
+.glass-button-primary {
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--lg-accent) 100%, white 18%),
+    var(--lg-accent)
+  );
+  color: var(--lg-accent-ink);
+  border: 0.5px solid rgba(255, 255, 255, 0.4);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.18),
+    0 8px 24px rgba(60, 125, 217, 0.4),
+    0 2px 6px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  transition:
+    background 180ms,
+    transform 100ms;
+}
+.glass-button-primary:active:not(:disabled) {
+  transform: scale(0.98);
+}
+.glass-button-primary:disabled {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--lg-muted);
+  border: none;
+  box-shadow: none;
+  text-shadow: none;
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+  cursor: not-allowed;
+}
+.glass-button-primary::before {
+  left: 12%;
+  right: 12%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.85),
+    transparent
+  );
+}
+
+/* ── Typography presets — cachebust v2 ───────────────────────────────────── */
+.glass-heading {
+  font-family: -apple-system, "SF Pro Display", "SF Pro", system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 34px;
+  letter-spacing: -0.6px;
+  line-height: 1.05;
+  color: var(--lg-fg);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+  text-align: center;
+  text-wrap: balance;
+}
+.glass-heading.compact {
+  font-size: 32px;
+}
+
+.glass-sub {
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--lg-muted);
+  text-align: center;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.16);
+  text-wrap: pretty;
+}
+
+/* iOS frame clearances (status bar / home indicator). */
+.glass-shell {
+  padding-top: max(60px, env(safe-area-inset-top, 0px) + 24px);
+  padding-bottom: max(34px, env(safe-area-inset-bottom, 0px) + 16px);
 }
