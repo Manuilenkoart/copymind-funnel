@@ -6,6 +6,9 @@ import { getUtmSource } from '@/app/lib/source';
 import { recordEvent } from '@/app/lib/tracking';
 import { withParams } from '@/app/lib/url';
 
+import Motif from '../components/Motif';
+import ProgressBar from '../components/ProgressBar';
+import Shell from '../components/Shell';
 import ScreenRenderer from '../QuestionType/ScreenRenderer';
 
 export default async function FunnelScreenPage({
@@ -49,10 +52,19 @@ export default async function FunnelScreenPage({
     screenIndex > 0 ? withParams(`/${funnelId}/${screenIndex - 1}`, sp) : null;
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-6 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white font-sans">
-      <div className="w-full max-w-md p-8 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 shadow-2xl transition-all duration-300 hover:shadow-indigo-500/10">
+    <Shell>
+      <ProgressBar
+        step={screenIndex}
+        total={config.screens.length}
+        backHref={prevHref}
+      />
+      <div className="flex flex-1 flex-col px-6">
+        <div className="mb-7 flex justify-center">
+          <Motif />
+        </div>
         <ScreenRenderer screen={screen} nextHref={nextHref} prevHref={prevHref} />
+        <div className="flex-1" />
       </div>
-    </main>
+    </Shell>
   );
 }

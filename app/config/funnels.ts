@@ -1,18 +1,18 @@
-import { EmailQuestionConfig, FunnelConfig, QuestionType } from "../types/funnel";
+import {
+  EmailQuestionConfig,
+  FunnelConfig,
+  QuestionType,
+} from "../types/funnel";
 
-const TITLE_CSS = "mt-14 text-2xl leading-[1.2]";
 export type QuizId = "quiz-1" | "quiz-2";
 
 const EMAIL_SCREEN: EmailQuestionConfig = {
-  title: {
-    text: "Where should we send your results?",
-    tailwindcss: "mt-4 text-3xl font-extrabold tracking-tight",
-  },
+  title: { text: "Your email" },
+  subtitle: { text: "For your daily prompt and to save your progress." },
   type: QuestionType.email,
   componentProps: {
-    subtitle: "Enter your email to receive your personalized roadmap and continue.",
-    placeholder: "name@example.com",
-    buttonText: "Continue to Results",
+    placeholder: "you@somewhere.com",
+    buttonText: "Continue",
   },
 };
 
@@ -20,16 +20,14 @@ export const funnelsConfig: Record<QuizId, FunnelConfig> = {
   "quiz-1": {
     screens: [
       {
-        title: {
-          text: "What is your age?",
-          tailwindcss: TITLE_CSS,
-        },
+        title: { text: "How old are you?" },
+        subtitle: { text: "We tailor reflections to your stage of life." },
         type: QuestionType.rowList,
         componentProps: {
           list: [
-            { text: "18-29" },
-            { text: "30-39" },
-            { text: "40-49" },
+            { text: "18–29" },
+            { text: "30–39" },
+            { text: "40–49" },
             { text: "50+" },
           ],
         },
@@ -40,9 +38,9 @@ export const funnelsConfig: Record<QuizId, FunnelConfig> = {
   "quiz-2": {
     screens: [
       {
-        title: {
-          text: "What is your primary goal?",
-          tailwindcss: TITLE_CSS,
+        title: { text: "What is your primary goal?" },
+        subtitle: {
+          text: "We'll personalize your plan around what matters most.",
         },
         type: QuestionType.rowList,
         componentProps: {

@@ -3,10 +3,5 @@ export default function PublicLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <div className="public-layout">
-      {/* Add public navigation or footers here */}
-      {children}
-    </div>
-  );
+  return <div className="min-h-screen w-full glass-bg text-white">{children}</div>;
 }

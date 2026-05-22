@@ -10,6 +10,7 @@ export interface QuestionTitleConfig {
 
 export interface BaseQuestionConfig {
   title: QuestionTitleConfig;
+  subtitle?: QuestionTitleConfig;
 }
 
 export interface RowListQuestionConfig extends BaseQuestionConfig {
@@ -23,7 +24,6 @@ export interface EmailQuestionConfig extends BaseQuestionConfig {
   type: QuestionType.email;
   componentProps: {
     placeholder?: string;
-    subtitle?: string;
     buttonText: string;
   };
 }
