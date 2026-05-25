@@ -1,10 +1,13 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { useState } from "react";
 
+import { saveVoiceTranscript } from "@/app/actions/transcripts";
 import { VoiceQuestionConfig } from "@/app/types/funnel";
 
 import { useVoiceTranscription, VoicePhase } from "./useVoiceTranscription";
+import { WHISPER_MODEL_LABEL } from "./whisperClient";
 
 interface VoiceInputProps {
   screen: VoiceQuestionConfig;
@@ -77,6 +80,10 @@ function TranscriptPlaceholder({
 
 export default function VoiceInput({ screen, nextHref }: VoiceInputProps) {
   const router = useRouter();
+  const params = useParams<{ funnelId: string; screenIndex: string }>();
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
+
   const {
     phase,
     loadProgress,
@@ -93,6 +100,30 @@ export default function VoiceInput({ screen, nextHref }: VoiceInputProps) {
     screen.componentProps.recordButtonText,
     loadProgress,
   );
+
+  const handleContinue = async () => {
+    setSaveError("");
+
+    if (!transcript.trim()) {
+      router.push(nextHref);
+      return;
+    }
+
+    setSaving(true);
+    const result = await saveVoiceTranscript({
+      funnelId: params.funnelId,
+      questionId: params.screenIndex,
+      text: transcript,
+      model: WHISPER_MODEL_LABEL,
+    });
+    setSaving(false);
+
+    if (!result.ok) {
+      setSaveError(result.error ?? "Failed to save");
+      return;
+    }
+    router.push(nextHref);
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -159,6 +190,10 @@ export default function VoiceInput({ screen, nextHref }: VoiceInputProps) {
         <p className="px-1 text-sm text-red-300/90">{errorMsg}</p>
       ) : null}
 
+      {saveError ? (
+        <p className="px-1 text-sm text-red-300/90">{saveError}</p>
+      ) : null}
+
       {transcript ? (
         <button
           type="button"
@@ -171,8 +206,9 @@ export default function VoiceInput({ screen, nextHref }: VoiceInputProps) {
 
       <button
         type="button"
-        onClick={() => router.push(nextHref)}
-        className="glass-gloss text-white transition active:scale-[0.985]"
+        onClick={handleContinue}
+        disabled={saving}
+        className="glass-gloss text-white transition active:scale-[0.985] disabled:opacity-60"
         style={{
           padding: "18px 22px",
           background: "rgba(255,255,255,0.18)",
@@ -186,7 +222,7 @@ export default function VoiceInput({ screen, nextHref }: VoiceInputProps) {
           textShadow: "0 1px 2px rgba(0,0,0,0.14)",
         }}
       >
-        {screen.componentProps.continueButtonText}
+        {saving ? "Saving…" : screen.componentProps.continueButtonText}
       </button>
     </div>
   );
