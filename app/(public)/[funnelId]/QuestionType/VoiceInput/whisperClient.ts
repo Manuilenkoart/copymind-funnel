@@ -1,5 +1,7 @@
 "use client";
 
+export const WHISPER_MODEL_LABEL = "whisper-tiny.en-bnb4";
+
 export type WhisperEvent =
   | { type: "ready" }
   | { type: "transcript"; text: string }
